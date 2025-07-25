@@ -1,5 +1,5 @@
 
-import { collection, getDoc, getDocs } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { db } from '../assets/sevices/Firebase'
 
@@ -30,11 +30,23 @@ const Products = () => {
     
   }
 
+
+
  
 
   useEffect(() =>{
     fetchData()
   },[])
+
+  const handleDelete = async (id) => {
+  try {
+    await deleteDoc(doc(db, "products", id));
+    setValue((prev) => prev.filter((item) => item.id !== id));
+    console.log("Product deleted successfully");
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+};
 
   return (
     <div>
@@ -54,17 +66,19 @@ const Products = () => {
     <a href="#">
         <img class="rounded-t-lg" src={ele.image} alt="" />
     </a>
-    <div class="p-5">
-        <a href="#">
+    <div class="p-3">
+    
             <h5 class="mb-2 font-bold tracking-tight text-gray-900" >{ele.title}</h5>
-            <p className='text-gray-900'>${ele.price}</p>
-        </a>
+            <p class=" font-normal text-gray-700 dark:text-gray-400">{ele.description}</p>
 
-        
+          </div>
+          <div className='flex justify-between p-5'>
+             <p className='text-gray-900 font-semibold text-2xl'>${ele.price}</p>
+            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-6 py-1 rounded-lg dark:bg-blue-200 dark:text-blue-800 ">{ele.category}</span>
+           
+          </div>
+           <button type="button" onClick={() => handleDelete(ele.id)} class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium  ms-6 my-3 text-sm px-25 rounded-full py-2.5 text-center ">Delete</button>
     </div>
-</div>
-
-
 
 
   ))
